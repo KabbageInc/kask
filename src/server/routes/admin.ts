@@ -64,7 +64,7 @@ module.exports = (APP_CONFIG) => {
                 b => b.BeerName
             ], 
             ['desc', 'asc', 'asc']))
-        .map(beers => beers.slice(0, 15))
+        .map(beers => beers.slice(0, 20))
         .subscribe(
             beers => res.send({numBeers: beers.length, beers}),
             err => res.status(500).send(err)

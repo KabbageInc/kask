@@ -22,7 +22,7 @@ export class MysqlDatabase implements Database {
         this.pool = createPool(poolconfig);
     }
 
-    private query(q, params?): Observable<any> {
+    private query (q, params?): Observable<any> {
         return Observable.create(observer => {
             this.pool.getConnection((err, conn) => {
                 if (err) {
@@ -363,7 +363,7 @@ export class MysqlDatabase implements Database {
         );
     }
 
-    getStyle(styleId: number): Observable<Style> {
+    getStyle(styleId: number): Observable<Style & {Beers: Beer[]}> {
         let q = 'Select * from `styles` WHERE `StyleId` = ? LIMIT 1;';
         return this.query(q, [styleId])
         .map(
@@ -386,7 +386,7 @@ export class MysqlDatabase implements Database {
         );
     }
 
-    getBrewery(breweryId: number): Observable<Brewery> {
+    getBrewery(breweryId: number): Observable<Brewery & {Beers: Beer[]}> {
         let q = 'Select * from `breweries` WHERE `BreweryId` = ? LIMIT 1;';
         return this.query(q, [breweryId])
         .map(
@@ -440,7 +440,7 @@ export class MysqlDatabase implements Database {
         );
     }
 
-    getLocation(locationId: number): Observable<Location> {
+    getLocation(locationId: number): Observable<Location & {Beers: Beer[]}> {
         let q = 'Select * from `off_tap_locations` WHERE `LocationId` = ? Limit 1;';
         return this.query(q, [locationId])
         .map(

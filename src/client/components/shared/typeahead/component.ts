@@ -5,7 +5,7 @@ import { TypeaheadProvider } from "./typeahead_provider";
 @Component({
     selector: 'typeahead',
     templateUrl: './template.html',
-    styleUrls: ['./styles.scss']
+    styleUrls: []
 })
 
 export class TypeaheadComponent implements OnInit {

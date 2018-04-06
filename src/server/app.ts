@@ -56,7 +56,7 @@ const APP_CONFIG = {
 app.use(bodyParser.json({limit: '100mb'}));
 app.use(cookieParser(APP_CONFIG.cookie_secret));
 
-//app.use(morgan(APP_CONFIG.log_level));
+app.use(morgan(APP_CONFIG.log_level));
 
 /*-------- API --------*/
 app.use('/api', require('./routes/api')(APP_CONFIG));
