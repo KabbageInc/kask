@@ -17,6 +17,7 @@ export interface Database {
     invalidateSession(session: string): Observable<any>;
 
     // Admin methods for saving data from searches
+    searchForBeer(searchTerm: string): Observable<Beer[]>;
     saveBeer(beer: Beer): Observable<number>;
     saveBeers(beers: Beer[]): Observable<Beer[]>;
     saveBeerLabelImage(beerId: number, scale: number, xOffset: number, yOffset: number): Observable<any>;

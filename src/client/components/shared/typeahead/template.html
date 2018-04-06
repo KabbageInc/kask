@@ -1,0 +1,16 @@
+<div class="dropdown">
+    <input type="text" 
+        class="form-control"
+        placeholder="Search"
+        (focus)="focused = true"
+        (blur)="focused = false"
+        (input)="onInput($event)"
+        [(ngModel)]="value"
+    />
+    <typeahead-list
+        [elements]="suggestions"
+        [focused]="focused"
+        [labelSelector]="typeaheadProvider.getLabel"
+        (elementClick)="emitSuggestion($event)"
+    ></typeahead-list>
+</div>

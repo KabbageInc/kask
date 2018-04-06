@@ -1,0 +1,5 @@
+<div class="dropdown-menu" *ngIf="visible && elements?.length">
+    <a class="dropdown-item" (mousedown)="selectElement(element)" *ngFor="let element of elements; let i = index" [class.active]="highlightedItem === i">
+        {{labelSelector(element)}}
+    </a>
+</div>

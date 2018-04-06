@@ -2,6 +2,8 @@ import {MysqlDatabase} from '../services/mysql_database';
 import * as express from 'express';
 import { Observable } from 'rxjs/Rx';
 import { Order } from '../models/order.model';
+import {uniqBy, orderBy} from 'lodash';
+import { Beer } from '../models/index';
 
 module.exports = (APP_CONFIG) => {
     const router = express.Router();
@@ -40,9 +42,29 @@ module.exports = (APP_CONFIG) => {
         .subscribe(tapInfo => sockets.emit('TapInfoEvent', tapInfo));
     }
 
+    function rankSearchResult(term: string, result: Beer) {
+        let regex =  new RegExp(term.split(' ').join('|'), 'gi');
+        let pts = ((result.BeerName + result.Brewery.BreweryName).match(regex) || []).length;
+
+        return pts;
+    }
+
     router.get('/search/:beername', (req, res) => {
         let q = req.params.beername;
-        return APP_CONFIG.beer_service.searchForBeer(q)
+        return Observable.combineLatest<Beer[], Beer[]>(
+            db.searchForBeer(q), 
+            APP_CONFIG.beer_service.searchForBeer(q)
+        ).first()
+        .map(([dbResults, apiResults]) => dbResults.concat(apiResults))
+        .map(beers => uniqBy(beers, beer => beer.BeerId))
+        .map(beers => orderBy(beers, 
+            [
+                b => rankSearchResult(q, b), 
+                b => b.Brewery.BreweryName, 
+                b => b.BeerName
+            ], 
+            ['desc', 'asc', 'asc']))
+        .map(beers => beers.slice(0, 15))
         .subscribe(
             beers => res.send({numBeers: beers.length, beers}),
             err => res.status(500).send(err)

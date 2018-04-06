@@ -22,7 +22,7 @@ export class MysqlDatabase implements Database {
         this.pool = createPool(poolconfig);
     }
 
-    private query (q, params?): Observable<any> {
+    private query(q, params?): Observable<any> {
         return Observable.create(observer => {
             this.pool.getConnection((err, conn) => {
                 if (err) {
@@ -239,6 +239,16 @@ export class MysqlDatabase implements Database {
         let q = 'Update `sessions` Set `Active`=0 Where `SessionId` = ?;';
         let params = [session];
         return this.query(q, params);
+    }
+
+    searchForBeer(searchTerm: string): Observable<Beer[]> {
+        let q = 'Select * from `beers`'
+        + ' join `styles` on `styles`.`StyleId` = `beers`.`StyleId`'
+        + ' join `breweries` on `breweries`.`BreweryId` = `beers`.`BreweryId`'
+        + ' where `beerName` LIKE ? OR `breweryName` LIKE ? LIMIT 100';
+
+        return this.query(q, [`%${searchTerm}%`, `%${searchTerm}%`])
+        .map(results => results.map(beer => this.mapBeer(beer)));
     }
 
     saveBeer(beer: Beer): Observable<number> {
