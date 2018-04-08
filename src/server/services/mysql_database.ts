@@ -242,6 +242,7 @@ export class MysqlDatabase implements Database {
     }
 
     searchForBeer(searchTerm: string): Observable<Beer[]> {
+        searchTerm = searchTerm.replace(/[%_]/g, '');
         let q = 'Select * from `beers`'
         + ' join `styles` on `styles`.`StyleId` = `beers`.`StyleId`'
         + ' join `breweries` on `breweries`.`BreweryId` = `beers`.`BreweryId`'
