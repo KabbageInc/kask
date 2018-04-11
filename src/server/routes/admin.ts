@@ -42,24 +42,25 @@ module.exports = (APP_CONFIG) => {
         .subscribe(tapInfo => sockets.emit('TapInfoEvent', tapInfo));
     }
 
-    function rankSearchResult(term: string, result: Beer) {
-        let regex =  new RegExp(term.split(' ').join('|'), 'gi');
+    function rankSearchResult(regex: RegExp, result: Beer) {
         let pts = ((result.BeerName + result.Brewery.BreweryName).match(regex) || []).length;
 
         return pts;
     }
 
     router.get('/search/:beername', (req, res) => {
-        let q = req.params.beername;
+        let searchTerm = req.params.beername;
+        let searchRegex = new RegExp(searchTerm.split(' ').join('|'), 'gi');
+        
         return Observable.combineLatest<Beer[], Beer[]>(
-            db.searchForBeer(q), 
-            APP_CONFIG.beer_service.searchForBeer(q)
+            db.searchForBeer(searchTerm), 
+            APP_CONFIG.beer_service.searchForBeer(searchTerm)
         ).first()
         .map(([dbResults, apiResults]) => dbResults.concat(apiResults))
         .map(beers => uniqBy(beers, beer => beer.BeerId))
         .map(beers => orderBy(beers, 
             [
-                b => rankSearchResult(q, b), 
+                b => rankSearchResult(searchRegex, b), 
                 b => b.Brewery.BreweryName, 
                 b => b.BeerName
             ], 
