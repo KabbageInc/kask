@@ -1,8 +1,8 @@
 import { Beer } from '../../../models';
 import { AdminService } from '../../../services/admin.service';
 import { Component, EventEmitter, Output } from '@angular/core';
-import { NgbTypeaheadConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs/Rx';
+import { TypeaheadProvider } from '../typeahead/typeahead_provider';
 
 @Component({
     selector: 'keg-add',
@@ -14,18 +14,20 @@ export class KegAddComponent {
 
     beerToLoad: Beer;
     kegSizeToLoad: string;
+    beerSuggestions: TypeaheadProvider<Beer>;
 
     @Output() kegSubmitted = new EventEmitter();
     @Output() cancelled = new EventEmitter();
 
     constructor(
-        private _adminService: AdminService,
-        config: NgbTypeaheadConfig
-    ) {
-        config.focusFirst = false;
-    }
+        private _adminService: AdminService
+    ) { }
 
     ngOnInit() {
+        this.beerSuggestions = {
+            getSuggestions: text => this._adminService.search(text).map(result => result.beers),
+            getLabel: beer => `${beer.Brewery.BreweryName}: ${beer.BeerName}`
+        };
     }
 
     ngOnDestroy() {
@@ -49,16 +51,8 @@ export class KegAddComponent {
             .map(result => result.beers);
     };
 
-    getBeerName(beer: Beer) {
-        return beer.BeerName;
-    }
-
-    getBeerDisplay(beer: Beer) {
-        return `${beer.Brewery.BreweryName}: ${beer.BeerName}`;
-    }
-
     beerSelected(selection: any) {
-        let beer: Beer = selection.item;
+        let beer: Beer = selection;
         this.beerToLoad = beer;
     }
 

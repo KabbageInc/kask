@@ -3,17 +3,10 @@
       <div class="col-md-6">
         <div class="form-group">
           <label>Beer</label>
-          <input
-                  placeholder="Search"
-                  type="text"
-                  name="newbeer"
-                  class="form-control"
-                  [(ngModel)]="beerToLoad"
-                  [ngbTypeahead]="search"
-                  [resultFormatter]="getBeerDisplay"
-                  [inputFormatter]="getBeerName"
-                  (selectItem)="beerSelected($event)"
-                  showHint="true" />
+          <typeahead  
+            [provider]="beerSuggestions" 
+            (onSuggestionClick)="beerSelected($event)">
+          </typeahead>
         </div>
         <div class="form-group">
           <label>Keg Size</label>

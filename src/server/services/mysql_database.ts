@@ -241,6 +241,17 @@ export class MysqlDatabase implements Database {
         return this.query(q, params);
     }
 
+    searchForBeer(searchTerm: string): Observable<Beer[]> {
+        searchTerm = searchTerm.replace(/[%_]/g, '');
+        let q = 'Select * from `beers`'
+        + ' join `styles` on `styles`.`StyleId` = `beers`.`StyleId`'
+        + ' join `breweries` on `breweries`.`BreweryId` = `beers`.`BreweryId`'
+        + ' where `beerName` LIKE ? OR `breweryName` LIKE ? LIMIT 100';
+
+        return this.query(q, [`%${searchTerm}%`, `%${searchTerm}%`])
+        .map(results => results.map(beer => this.mapBeer(beer)));
+    }
+
     saveBeer(beer: Beer): Observable<number> {
         let q = 'Insert into `beers` SET ? ON DUPLICATE KEY Update `BeerId`=LAST_INSERT_ID(`BeerId`);';
         let params = {...beer, StyleId: beer.Style.StyleId, BreweryId: beer.Brewery.BreweryId};
@@ -353,7 +364,7 @@ export class MysqlDatabase implements Database {
         );
     }
 
-    getStyle(styleId: number): Observable<Style> {
+    getStyle(styleId: number): Observable<Style & {Beers: Beer[]}> {
         let q = 'Select * from `styles` WHERE `StyleId` = ? LIMIT 1;';
         return this.query(q, [styleId])
         .map(
@@ -376,7 +387,7 @@ export class MysqlDatabase implements Database {
         );
     }
 
-    getBrewery(breweryId: number): Observable<Brewery> {
+    getBrewery(breweryId: number): Observable<Brewery & {Beers: Beer[]}> {
         let q = 'Select * from `breweries` WHERE `BreweryId` = ? LIMIT 1;';
         return this.query(q, [breweryId])
         .map(
@@ -430,7 +441,7 @@ export class MysqlDatabase implements Database {
         );
     }
 
-    getLocation(locationId: number): Observable<Location> {
+    getLocation(locationId: number): Observable<Location & {Beers: Beer[]}> {
         let q = 'Select * from `off_tap_locations` WHERE `LocationId` = ? Limit 1;';
         return this.query(q, [locationId])
         .map(

@@ -8,7 +8,7 @@ export class AdminService {
     ) {}
 
     search(beerName: string) {
-        return this.http.get(`/api/admin/search/${beerName}`)
+        return this.http.get(`/api/admin/search/${encodeURIComponent(beerName)}`)
             .map(res => res.json());
     }
 

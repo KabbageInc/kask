@@ -11,6 +11,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { KegMoveComponent } from '../components/shared/keg_move/component';
 import { DateRangeComponent } from '../components/shared/date_range/component';
 import { NgbDateHelper } from '../helpers/ngb_date';
+import { TypeaheadComponent } from '../components/shared/typeahead/component';
+import { TypeaheadListComponent } from '../components/shared/typeahead/list/component';
 
 @NgModule({
     imports: [
@@ -26,7 +28,9 @@ import { NgbDateHelper } from '../helpers/ngb_date';
         KegProgressComponent,
         KegAddComponent,
         KegMoveComponent,
-        DateRangeComponent
+        DateRangeComponent,
+        TypeaheadComponent,
+        TypeaheadListComponent
     ],
     exports: [
         HttpModule,
@@ -38,7 +42,9 @@ import { NgbDateHelper } from '../helpers/ngb_date';
         KegProgressComponent,
         KegAddComponent,
         KegMoveComponent,
-        DateRangeComponent
+        DateRangeComponent,
+        TypeaheadComponent,
+        TypeaheadListComponent
     ]
 })
 export class SharedModule { }
