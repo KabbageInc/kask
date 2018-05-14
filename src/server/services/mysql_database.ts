@@ -46,7 +46,7 @@ export class MysqlDatabase implements Database {
 
     private mapBeerSession(result: any): BeerSession {
         let session: BeerSession = {
-            Active: result.Active,
+            Active: !!result.Active,
             SessionId: result.SessionId,
             NetVote: result.NetVote,
             UserVote: result.UserVote,
